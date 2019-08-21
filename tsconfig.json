@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "target": "es6",
+        "target": "es5",
         "strictNullChecks": true,
         "sourceMap": true,
         "removeComments": true,
@@ -13,10 +13,14 @@
         "noUnusedParameters": true,
         "baseUrl": "./src",
         "paths" : {
-          "/*": [
+            "/*": [
               "./*"
             ]
-        }
+        },
+        "lib": [
+            "es2015",
+            "dom"
+        ]
     },
     "exclude": [
         "node_modules",
@@ -43,5 +47,5 @@
         "suppressExcessPropertyErrors": true,
         "suppressImplicitAnyIndexErrors": true,
         "module": "commonjs"
-      }
+    }
 }
