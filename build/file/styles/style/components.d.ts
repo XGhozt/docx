@@ -12,7 +12,7 @@ export declare class Link extends XmlComponent {
     constructor(value: string);
 }
 export declare class UiPriority extends XmlComponent {
-    constructor(value: string);
+    constructor(value: number);
 }
 export declare class UnhideWhenUsed extends XmlComponent {
     constructor();

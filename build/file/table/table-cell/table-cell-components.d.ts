@@ -12,12 +12,12 @@ export declare class TableCellBorders extends IgnoreIfEmptyXmlComponent {
 export declare class GridSpan extends XmlComponent {
     constructor(value: number);
 }
-export declare enum VMergeType {
+export declare enum VerticalMergeType {
     CONTINUE = "continue",
     RESTART = "restart"
 }
-export declare class VMerge extends XmlComponent {
-    constructor(value: VMergeType);
+export declare class VerticalMerge extends XmlComponent {
+    constructor(value: VerticalMergeType);
 }
 export declare enum VerticalAlign {
     BOTTOM = "bottom",

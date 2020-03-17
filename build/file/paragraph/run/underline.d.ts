@@ -22,7 +22,7 @@ export declare abstract class BaseUnderline extends XmlComponent {
     constructor(underlineType: string, color?: string);
 }
 export declare class Underline extends BaseUnderline {
-    constructor(underlineType?: string, color?: string);
+    constructor(underlineType?: UnderlineType, color?: string);
 }
 export declare class DashUnderline extends BaseUnderline {
     constructor();

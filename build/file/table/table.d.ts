@@ -1,14 +1,15 @@
 import { XmlComponent } from "../../file/xml-components";
-import { TableCell, WidthType } from "./table-cell";
-import { TableColumn } from "./table-column";
-import { ITableFloatOptions } from "./table-properties";
+import { AlignmentType } from "../paragraph";
+import { WidthType } from "./table-cell";
+import { ITableBordersOptions, ITableFloatOptions } from "./table-properties";
 import { TableLayoutType } from "./table-properties/table-layout";
 import { TableRow } from "./table-row";
 export interface ITableOptions {
-    readonly rows: number;
-    readonly columns: number;
-    readonly width?: number;
-    readonly widthUnitType?: WidthType;
+    readonly rows: TableRow[];
+    readonly width?: {
+        readonly size: number;
+        readonly type?: WidthType;
+    };
     readonly columnWidths?: number[];
     readonly margins?: {
         readonly marginUnitType?: WidthType;
@@ -19,12 +20,10 @@ export interface ITableOptions {
     };
     readonly float?: ITableFloatOptions;
     readonly layout?: TableLayoutType;
+    readonly borders?: ITableBordersOptions;
+    readonly alignment?: AlignmentType;
 }
 export declare class Table extends XmlComponent {
     private readonly properties;
-    private readonly rows;
-    constructor({ rows, columns, width, widthUnitType, columnWidths, margins: { marginUnitType, top, bottom, right, left }, float, layout, }: ITableOptions);
-    getRow(index: number): TableRow;
-    getColumn(index: number): TableColumn;
-    getCell(row: number, col: number): TableCell;
+    constructor({ rows, width, columnWidths, margins: { marginUnitType, top, bottom, right, left }, float, layout, borders, alignment, }: ITableOptions);
 }

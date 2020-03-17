@@ -1,23 +1,49 @@
 import { Paragraph } from "../../../file/paragraph";
+import { BorderStyle } from "../../../file/styles";
 import { IXmlableObject, XmlComponent } from "../../../file/xml-components";
+import { File } from "../../file";
 import { ITableShadingAttributesProperties } from "../shading";
 import { Table } from "../table";
 import { ITableCellMarginOptions } from "./cell-margin/table-cell-margins";
-import { TableCellBorders, VerticalAlign, VMergeType } from "./table-cell-components";
-import { TableCellProperties } from "./table-cell-properties";
+import { VerticalAlign, VerticalMergeType, WidthType } from "./table-cell-components";
 export interface ITableCellOptions {
     readonly shading?: ITableShadingAttributesProperties;
+    readonly margins?: ITableCellMarginOptions;
+    readonly verticalAlign?: VerticalAlign;
+    readonly verticalMerge?: VerticalMergeType;
+    readonly width?: {
+        readonly size: number | string;
+        readonly type?: WidthType;
+    };
+    readonly columnSpan?: number;
+    readonly rowSpan?: number;
+    readonly borders?: {
+        readonly top?: {
+            readonly style: BorderStyle;
+            readonly size: number;
+            readonly color: string;
+        };
+        readonly bottom?: {
+            readonly style: BorderStyle;
+            readonly size: number;
+            readonly color: string;
+        };
+        readonly left?: {
+            readonly style: BorderStyle;
+            readonly size: number;
+            readonly color: string;
+        };
+        readonly right?: {
+            readonly style: BorderStyle;
+            readonly size: number;
+            readonly color: string;
+        };
+    };
+    readonly children: Array<Paragraph | Table>;
 }
 export declare class TableCell extends XmlComponent {
+    readonly options: ITableCellOptions;
     private readonly properties;
-    constructor();
-    add(item: Paragraph | Table): TableCell;
-    prepForXml(): IXmlableObject | undefined;
-    setVerticalAlign(type: VerticalAlign): TableCell;
-    addGridSpan(cellSpan: number): TableCell;
-    addVerticalMerge(type: VMergeType): TableCell;
-    setMargins(margins: ITableCellMarginOptions): TableCell;
-    setShading(attrs: ITableShadingAttributesProperties): TableCell;
-    readonly Borders: TableCellBorders;
-    readonly Properties: TableCellProperties;
+    constructor(options: ITableCellOptions);
+    prepForXml(file?: File): IXmlableObject | undefined;
 }

@@ -7,5 +7,4 @@ export interface IStyleAttributes {
 }
 export declare class Style extends XmlComponent {
     constructor(attributes: IStyleAttributes, name?: string);
-    push(styleSegment: XmlComponent): void;
 }

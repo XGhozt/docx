@@ -1,7 +1,7 @@
 import { XmlComponent } from "../file/xml-components";
 import { FooterReferenceType } from "./document";
 import { Footer } from "./footer/footer";
-import { Image, Media } from "./media";
+import { Media } from "./media";
 import { Paragraph } from "./paragraph";
 import { Relationships } from "./relationships";
 import { Table } from "./table";
@@ -15,7 +15,6 @@ export declare class FooterWrapper {
     private readonly relationships;
     constructor(media: Media, referenceId: number, initContent?: XmlComponent);
     add(item: Paragraph | Table): void;
-    addImage(image: Image): FooterWrapper;
     addChildElement(childElement: XmlComponent): void;
     readonly Footer: Footer;
     readonly Relationships: Relationships;

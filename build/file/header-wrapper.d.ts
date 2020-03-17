@@ -1,7 +1,7 @@
 import { XmlComponent } from "../file/xml-components";
 import { HeaderReferenceType } from "./document";
 import { Header } from "./header/header";
-import { Image, Media } from "./media";
+import { Media } from "./media";
 import { Paragraph } from "./paragraph";
 import { Relationships } from "./relationships";
 import { Table } from "./table";
@@ -15,7 +15,6 @@ export declare class HeaderWrapper {
     private readonly relationships;
     constructor(media: Media, referenceId: number, initContent?: XmlComponent);
     add(item: Paragraph | Table): HeaderWrapper;
-    addImage(image: Image): HeaderWrapper;
     addChildElement(childElement: XmlComponent | string): void;
     readonly Header: Header;
     readonly Relationships: Relationships;

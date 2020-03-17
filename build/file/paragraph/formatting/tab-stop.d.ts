@@ -1,8 +1,8 @@
 import { XmlAttributeComponent, XmlComponent } from "../../../file/xml-components";
 export declare class TabStop extends XmlComponent {
-    constructor(tab: TabStopItem);
+    constructor(type: TabStopType, position: number, leader?: LeaderType);
 }
-export declare enum TabValue {
+export declare enum TabStopType {
     LEFT = "left",
     RIGHT = "right",
     CENTER = "center",
@@ -20,8 +20,11 @@ export declare enum LeaderType {
     NONE = "none",
     UNDERSCORE = "underscore"
 }
+export declare enum TabStopPosition {
+    MAX = 9026
+}
 export declare class TabAttributes extends XmlAttributeComponent<{
-    readonly val: TabValue;
+    readonly val: TabStopType;
     readonly pos: string | number;
     readonly leader?: LeaderType;
 }> {
@@ -32,17 +35,5 @@ export declare class TabAttributes extends XmlAttributeComponent<{
     };
 }
 export declare class TabStopItem extends XmlComponent {
-    constructor(value: TabValue, position: string | number, leader?: LeaderType);
-}
-export declare class MaxRightTabStop extends TabStop {
-    constructor(leader?: LeaderType);
-}
-export declare class LeftTabStop extends TabStop {
-    constructor(position: number, leader?: LeaderType);
-}
-export declare class RightTabStop extends TabStop {
-    constructor(position: number, leader?: LeaderType);
-}
-export declare class CenterTabStop extends TabStop {
-    constructor(position: number, leader?: LeaderType);
+    constructor(value: TabStopType, position: string | number, leader?: LeaderType);
 }

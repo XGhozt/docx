@@ -11,7 +11,7 @@ import { Footer, Header } from "./header";
 import { HeaderWrapper } from "./header-wrapper";
 import { Media } from "./media";
 import { Numbering } from "./numbering";
-import { Bookmark, Hyperlink, Paragraph } from "./paragraph";
+import { Hyperlink, HyperlinkRef, Paragraph } from "./paragraph";
 import { Relationships } from "./relationships";
 import { Settings } from "./settings";
 import { Styles } from "./styles";
@@ -31,11 +31,10 @@ export interface ISectionOptions {
     readonly size?: IPageSizeAttributes;
     readonly margins?: IPageMarginAttributes;
     readonly properties?: SectionPropertiesOptions;
-    readonly children: Array<Paragraph | Table | TableOfContents>;
+    readonly children: Array<Paragraph | Table | TableOfContents | HyperlinkRef>;
 }
 export declare class File {
     private currentRelationshipId;
-    private styles;
     private readonly document;
     private readonly headers;
     private readonly footers;
@@ -48,20 +47,20 @@ export declare class File {
     private readonly settings;
     private readonly contentTypes;
     private readonly appProperties;
+    private readonly styles;
+    private readonly hyperlinkCache;
     constructor(options?: IPropertiesOptions, fileProperties?: IFileProperties, sections?: ISectionOptions[]);
-    createHyperlink(link: string, text?: string): Hyperlink;
-    createInternalHyperLink(anchor: string, text?: string): Hyperlink;
-    createBookmark(name: string, text?: string): Bookmark;
     addSection({ headers, footers, margins, size, properties, children, }: ISectionOptions): void;
-    createFootnote(paragraph: Paragraph): void;
     verifyUpdateFields(): void;
+    private createHyperlink;
+    private createInternalHyperLink;
     private createHeader;
     private createFooter;
     private addHeaderToDocument;
     private addFooterToDocument;
     private addDefaultRelationships;
     readonly Document: Document;
-    Styles: Styles;
+    readonly Styles: Styles;
     readonly CoreProperties: CoreProperties;
     readonly Numbering: Numbering;
     readonly Media: Media;
@@ -73,4 +72,7 @@ export declare class File {
     readonly AppProperties: AppProperties;
     readonly FootNotes: FootNotes;
     readonly Settings: Settings;
+    readonly HyperlinkCache: {
+        readonly [key: string]: Hyperlink;
+    };
 }
