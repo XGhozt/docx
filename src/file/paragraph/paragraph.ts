@@ -1,9 +1,8 @@
 // http://officeopenxml.com/WPparagraph.php
 import { FootnoteReferenceRun } from "file/footnotes/footnote/run/reference-run";
-import { Image } from "file/media";
-import { Num } from "file/numbering/num";
-import { XmlComponent } from "file/xml-components";
+import { IXmlableObject, XmlComponent } from "file/xml-components";
 
+import { File } from "../file";
 import { Alignment, AlignmentType } from "./formatting/alignment";
 import { Bidirectional } from "./formatting/bidirectional";
 import { IBorderOptions, ThematicBreak } from "./formatting/border";
@@ -12,16 +11,11 @@ import { KeepLines, KeepNext } from "./formatting/keep";
 import { PageBreak, PageBreakBefore } from "./formatting/page-break";
 import { ContextualSpacing, ISpacingProperties, Spacing } from "./formatting/spacing";
 import { HeadingLevel, Style } from "./formatting/style";
-import { CenterTabStop, LeaderType, LeftTabStop, MaxRightTabStop, RightTabStop } from "./formatting/tab-stop";
+import { LeaderType, TabStop, TabStopPosition, TabStopType } from "./formatting/tab-stop";
 import { NumberProperties } from "./formatting/unordered-list";
-import { Bookmark, Hyperlink, OutlineLevel } from "./links";
+import { Bookmark, HyperlinkRef, OutlineLevel } from "./links";
 import { ParagraphProperties } from "./properties";
-import { PictureRun, Run, SequentialIdentifier, TextRun } from "./run";
-
-interface ITabStopOptions {
-    readonly position: number;
-    readonly leader?: LeaderType;
-}
+import { PictureRun, Run, SequentialIdentifier, SymbolRun, TextRun } from "./run";
 
 export interface IParagraphOptions {
     readonly text?: string;
@@ -37,24 +31,23 @@ export interface IParagraphOptions {
     readonly indent?: IIndentAttributesProperties;
     readonly keepLines?: boolean;
     readonly keepNext?: boolean;
-    readonly tabStop?: {
-        readonly left?: ITabStopOptions;
-        readonly right?: ITabStopOptions;
-        readonly maxRight?: {
-            readonly leader?: LeaderType;
-        };
-        readonly center?: ITabStopOptions;
-    };
+    readonly tabStops?: Array<{
+        readonly position: number | TabStopPosition;
+        readonly type: TabStopType;
+        readonly leader?: LeaderType;
+    }>;
     readonly style?: string;
     readonly bullet?: {
         readonly level: number;
     };
     readonly numbering?: {
-        readonly num: Num;
+        readonly reference: string;
         readonly level: number;
         readonly custom?: boolean;
     };
-    readonly children?: Array<TextRun | PictureRun | Hyperlink>;
+    readonly children?: Array<
+        TextRun | PictureRun | SymbolRun | Bookmark | PageBreak | SequentialIdentifier | FootnoteReferenceRun | HyperlinkRef
+    >;
 }
 
 export class Paragraph extends XmlComponent {
@@ -131,21 +124,9 @@ export class Paragraph extends XmlComponent {
             this.properties.push(new KeepNext());
         }
 
-        if (options.tabStop) {
-            if (options.tabStop.left) {
-                this.properties.push(new LeftTabStop(options.tabStop.left.position, options.tabStop.left.leader));
-            }
-
-            if (options.tabStop.right) {
-                this.properties.push(new RightTabStop(options.tabStop.right.position, options.tabStop.right.leader));
-            }
-
-            if (options.tabStop.maxRight) {
-                this.properties.push(new MaxRightTabStop(options.tabStop.maxRight.leader));
-            }
-
-            if (options.tabStop.center) {
-                this.properties.push(new CenterTabStop(options.tabStop.center.position, options.tabStop.center.leader));
+        if (options.tabStops) {
+            for (const tabStop of options.tabStops) {
+                this.properties.push(new TabStop(tabStop.type, tabStop.position, tabStop.leader));
             }
         }
 
@@ -162,58 +143,36 @@ export class Paragraph extends XmlComponent {
             if (!options.numbering.custom) {
                 this.properties.push(new Style("ListParagraph"));
             }
-            this.properties.push(new NumberProperties(options.numbering.num.id, options.numbering.level));
+            this.properties.push(new NumberProperties(options.numbering.reference, options.numbering.level));
         }
 
         if (options.children) {
             for (const child of options.children) {
+                if (child instanceof Bookmark) {
+                    this.root.push(child.start);
+                    this.root.push(child.text);
+                    this.root.push(child.end);
+                    continue;
+                }
+
                 this.root.push(child);
             }
         }
     }
 
-    public addRun(run: Run): Paragraph {
-        this.root.push(run);
-        return this;
-    }
+    public prepForXml(file: File): IXmlableObject | undefined {
+        for (const element of this.root) {
+            if (element instanceof HyperlinkRef) {
+                const index = this.root.indexOf(element);
+                this.root[index] = file.HyperlinkCache[element.id];
+            }
+        }
 
-    public addHyperLink(hyperlink: Hyperlink): Paragraph {
-        this.root.push(hyperlink);
-        return this;
-    }
-
-    public addBookmark(bookmark: Bookmark): Paragraph {
-        // Bookmarks by spec have three components, a start, text, and end
-        this.root.push(bookmark.start);
-        this.root.push(bookmark.text);
-        this.root.push(bookmark.end);
-        return this;
-    }
-
-    public addImage(image: Image): PictureRun {
-        const run = image.Run;
-        this.addRun(run);
-
-        return run;
-    }
-
-    public pageBreak(): Paragraph {
-        this.root.push(new PageBreak());
-        return this;
-    }
-
-    public referenceFootnote(id: number): Paragraph {
-        this.root.push(new FootnoteReferenceRun(id));
-        return this;
+        return super.prepForXml();
     }
 
     public addRunToFront(run: Run): Paragraph {
         this.root.splice(1, 0, run);
-        return this;
-    }
-
-    public addSequentialIdentifier(identifier: string): Paragraph {
-        this.root.push(new SequentialIdentifier(identifier));
         return this;
     }
 }

@@ -3,34 +3,55 @@
 import * as fs from "fs";
 import {
     Document,
+    OverlapType,
     Packer,
     Paragraph,
     RelativeHorizontalPosition,
     RelativeVerticalPosition,
     Table,
     TableAnchorType,
+    TableCell,
     TableLayoutType,
+    TableRow,
     WidthType,
 } from "../build";
 
 const doc = new Document();
 
 const table = new Table({
-    rows: 2,
-    columns: 2,
+    rows: [
+        new TableRow({
+            children: [
+                new TableCell({
+                    children: [new Paragraph("Hello")],
+                    columnSpan: 2,
+                }),
+            ],
+        }),
+        new TableRow({
+            children: [
+                new TableCell({
+                    children: [],
+                }),
+                new TableCell({
+                    children: [],
+                }),
+            ],
+        }),
+    ],
     float: {
         horizontalAnchor: TableAnchorType.MARGIN,
         verticalAnchor: TableAnchorType.MARGIN,
         relativeHorizontalPosition: RelativeHorizontalPosition.RIGHT,
         relativeVerticalPosition: RelativeVerticalPosition.BOTTOM,
+        overlap: OverlapType.NEVER,
     },
-    width: 4535,
-    widthUnitType: WidthType.DXA,
+    width: {
+        size: 4535,
+        type: WidthType.DXA,
+    },
     layout: TableLayoutType.FIXED,
 });
-
-table.getCell(0, 0).add(new Paragraph("Hello"));
-table.getRow(0).mergeCells(0, 1);
 
 doc.addSection({
     children: [table],

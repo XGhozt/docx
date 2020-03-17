@@ -1,15 +1,34 @@
 // Example on how to add hyperlinks to websites
 // Import from 'docx' rather than '../build' if you install from npm
 import * as fs from "fs";
-import { Document, Packer, Paragraph } from "../build";
+import { Document, HyperlinkRef, HyperlinkType, Packer, Paragraph, Media } from "../build";
 
-const doc = new Document();
-const paragraph = new Paragraph({});
-const link = doc.createHyperlink("http://www.example.com", "Hyperlink");
+const doc = new Document({
+    hyperlinks: {
+        myCoolLink: {
+            link: "http://www.example.com",
+            text: "Hyperlink",
+            type: HyperlinkType.EXTERNAL,
+        },
+        myOtherLink: {
+            link: "http://www.google.com",
+            text: "Google Link",
+            type: HyperlinkType.EXTERNAL,
+        },
+    },
+});
 
-paragraph.addHyperLink(link);
+const image1 = Media.addImage(doc, fs.readFileSync("./demo/images/image1.jpeg"));
+
 doc.addSection({
-    children: [paragraph],
+    children: [
+        new Paragraph({
+            children: [new HyperlinkRef("myCoolLink")],
+        }),
+        new Paragraph({
+            children: [image1, new HyperlinkRef("myOtherLink")],
+        }),
+    ],
 });
 
 Packer.toBuffer(doc).then((buffer) => {
